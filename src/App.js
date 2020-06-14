@@ -1,3 +1,5 @@
+import ReactGA from 'react-ga';
+
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
@@ -17,6 +19,9 @@ const useStyles = makeStyles((theme) => ({
 
 const DEFAULT_VALUE = [];
 
+ReactGA.initialize('UA-162934767-2');
+ReactGA.pageview(window.location.pathname + window.location.search);
+
 function App() {
   const classes = useStyles();
   const match = window.location.search.match(/filters=(\[[\d,]+\])/);
@@ -24,13 +29,19 @@ function App() {
   if (match) {
     defaultValue = JSON.parse(match[1]).map(index => COLUMNS[index]);
   }
-  const [filters, setFilters] = React.useState(defaultValue);
-  const urlFilters = filters.map(filter => COLUMNS.findIndex(column => column.title === filter.title)).sort();
-  if (filters.length !== 0) {
-    window.history.pushState(urlFilters, 'Title', `/?filters=${JSON.stringify(urlFilters)}`);
-  } else {
-    window.history.pushState(urlFilters, 'Title', `/`);
-  }
+  const [filters, setRawFilters] = React.useState(defaultValue);
+
+  const setFilters = (newFilters) => {
+    setRawFilters(newFilters);
+
+    const urlFilters = newFilters.map(filter => COLUMNS.findIndex(column => column.title === filter.title)).sort();
+    if (newFilters.length !== 0) {
+      window.history.pushState(urlFilters, 'Title', `/?filters=${JSON.stringify(urlFilters)}`);
+    } else {
+      window.history.pushState(urlFilters, 'Title', `/`);
+    }
+    ReactGA.pageview(window.location.pathname + window.location.search);
+  };
 
   return (
     <div className="App">
