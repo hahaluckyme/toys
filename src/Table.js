@@ -53,7 +53,7 @@ function stableSort(array, comparator) {
 const headCells = [
   { id: 'name', numeric: false, disablePadding: true, label: 'Trait' },
   { id: 'corr', numeric: true, disablePadding: false, label: 'Correlation' },
-  { id: 'support', numeric: true, disablePadding: false, label: 'Support' },
+  { id: 'support', numeric: true, disablePadding: false, label: 'Percent' },
   { id: 'count', numeric: true, disablePadding: false, label: 'Count' },
 ];
 
@@ -86,7 +86,7 @@ function EnhancedTableHead(props) {
               direction={orderBy === headCell.id ? order : 'desc'}
               onClick={createSortHandler(headCell.id)}
             >
-              {headCell.label}
+              <b>{headCell.label}</b>
               {orderBy === headCell.id ? (
                 <span className={classes.visuallyHidden}>
                   {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
