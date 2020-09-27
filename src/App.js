@@ -36,7 +36,7 @@ function App() {
 
     const urlFilters = newFilters.map(filter => COLUMNS.findIndex(column => column.title === filter.title)).sort();
     if (newFilters.length !== 0) {
-      window.history.pushState(urlFilters, 'Title', `/?filters=${JSON.stringify(urlFilters)}`);
+      window.history.pushState(urlFilters, 'Title', `/?filters=${encodeURI(JSON.stringify(urlFilters))}`);
     } else {
       window.history.pushState(urlFilters, 'Title', `/`);
     }
