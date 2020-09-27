@@ -227,6 +227,8 @@ export default function EnhancedTable(props) {
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [fetishesOnly, setFetishesOnly] = React.useState(true);
+  const [ageHundred, setAgeHundred] = React.useState(false);
+  const [ageTypicalBucket, setAgeTypicalBucket] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(25);
 
   const handleRequestSort = (event, property) => {
@@ -295,8 +297,38 @@ export default function EnhancedTable(props) {
     const age = e["Age"];
     relevantAgesCount[age] += 1;
   });
-  const ages = Object.keys(relevantAgesCount).sort().map(age => [age, relevantAgesCount[age], totalAgesCount[age] - relevantAgesCount[age]]);
-  console.log(ages);
+  let ages;
+
+  if (!ageTypicalBucket) {
+    ages = Object.keys(relevantAgesCount).sort().map(age => [age, relevantAgesCount[age], totalAgesCount[age] - relevantAgesCount[age]]);
+  } else {
+    function computeBuckets(a) {
+      return {
+        '13-17': a[13] + a[14] + a[15] + a[16] + a[17],
+        '18-24': a[18] + a[19] + a[20] + a[21] + a[22] + a[23] + a[24],
+        '25-29': a[25] + a[26] + a[27] + a[28] + a[29],
+        '30-34': a[30] + a[31] + a[32] + a[33] + a[34],
+        '35-39': a[35] + a[36] + a[37] + a[38] + a[39],
+        '40-44': a[40] + a[41] + a[42] + a[43] + a[44],
+        '45-49': a[45] + a[46] + a[47] + a[48] + a[49],
+        '50-54': a[50] + a[51] + a[52] + a[53] + a[54],
+      };
+    }
+
+    const releventAgeBuckets = computeBuckets(relevantAgesCount);
+    const totalAgeBuckets = computeBuckets(totalAgesCount);
+
+    ages = [
+      ['13-17', releventAgeBuckets['13-17'], totalAgeBuckets['13-17'] - releventAgeBuckets['13-17']],
+      ['18-24', releventAgeBuckets['18-24'], totalAgeBuckets['18-24'] - releventAgeBuckets['18-24']],
+      ['25-29', releventAgeBuckets['25-29'], totalAgeBuckets['25-29'] - releventAgeBuckets['25-29']],
+      ['30-34', releventAgeBuckets['30-34'], totalAgeBuckets['30-34'] - releventAgeBuckets['30-34']],
+      ['35-39', releventAgeBuckets['35-39'], totalAgeBuckets['35-39'] - releventAgeBuckets['35-39']],
+      ['40-44', releventAgeBuckets['40-44'], totalAgeBuckets['40-44'] - releventAgeBuckets['40-44']],
+      ['45-49', releventAgeBuckets['45-49'], totalAgeBuckets['45-49'] - releventAgeBuckets['45-49']],
+      ['50-54', releventAgeBuckets['50-54'], totalAgeBuckets['50-54'] - releventAgeBuckets['50-54']],
+    ];
+  }
 
   return (
     <div className={classes.root}>
@@ -390,8 +422,20 @@ export default function EnhancedTable(props) {
             groupWidth: '100%',
           },
           colors: ['#3366cc', '#bbddee'],
-          isStacked: true,
+          isStacked: ageHundred ? 'percent' : true,
         }}
+      />
+      <FormControlLabel
+        control={<Switch checked={ageHundred} onChange={(event) => {
+          setAgeHundred(event.target.checked);
+        }} />}
+        label="100%?"
+      />
+      <FormControlLabel
+        control={<Switch checked={ageTypicalBucket} onChange={(event) => {
+          setAgeTypicalBucket(event.target.checked);
+        }} />}
+        label="Groups?"
       />
     </div>
   );
